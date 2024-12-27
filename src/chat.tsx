@@ -8,8 +8,8 @@ import {
   type Message,
 } from "../__generated__/resolvers-types";
 import css from "./chat.module.css";
-import { useLazyQuery } from "@apollo/client";
-import { GET_MESSAGES } from "./graphql/messages";
+import { useLazyQuery, useMutation } from "@apollo/client";
+import { GET_MESSAGES, SEND_MESSAGE } from "./graphql/messages";
 
 
 const Item: React.FC<Message> = ({ text, sender }) => {
@@ -36,6 +36,11 @@ export const Chat: React.FC = () => {
   const [messagesList, setMessagesList] = useState<Message[]>([]);
 
   const [getMessages] = useLazyQuery(GET_MESSAGES);
+  const [sendMessage] = useMutation(SEND_MESSAGE);
+
+  const handleSend = async () => {
+    
+  }
 
 
   useEffect(() => {
