@@ -35,13 +35,19 @@ export const Chat: React.FC = () => {
 
   const [messagesList, setMessagesList] = useState<Message[]>([]);
 
-  const [getInstance] = useLazyQuery(GET_MESSAGES);
+  const [getMessages] = useLazyQuery(GET_MESSAGES);
+
 
   useEffect(() => {
-    getInstance()
-      .then(response => {
-        setMessagesList(response.data.messages.edges.map((message:MessageEdge) => message.node));
-      })
+    const getMessageFunc = async () => {
+      const output = await getMessages();
+      const messageList = output.data.messages.edges.map((message:MessageEdge) => message.node);
+      setMessagesList(messageList);
+      
+      return messageList;
+    } 
+
+    getMessageFunc();
   }, []);
 
 
