@@ -34,12 +34,13 @@ const getItem: ItemContent<Message, unknown> = (_, data) => {
 export const Chat: React.FC = () => {
 
   const [messagesList, setMessagesList] = useState<Message[]>([]);
+  const [textInputValue, setTextInputValue] = useState<string>('');
 
   const [getMessages] = useLazyQuery(GET_MESSAGES);
   const [sendMessage] = useMutation(SEND_MESSAGE);
 
   const handleSend = async () => {
-    
+
   }
 
 
@@ -64,6 +65,10 @@ export const Chat: React.FC = () => {
       <div className={css.footer}>
         <input
           type="text"
+          value={textInputValue}
+          onChange={e => {
+            setTextInputValue(e.target.value);
+          }}
           className={css.textInput}
           placeholder="Message text"
         />
