@@ -1,20 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ItemContent, Virtuoso } from "react-virtuoso";
 import cn from "clsx";
 import {
+  MessageEdge,
   MessageSender,
   MessageStatus,
   type Message,
 } from "../__generated__/resolvers-types";
 import css from "./chat.module.css";
+import { useLazyQuery } from "@apollo/client";
+import { GET_MESSAGES } from "./graphql/messages";
 
-const temp_data: Message[] = Array.from(Array(30), (_, index) => ({
-  id: String(index),
-  text: `Message number ${index}`,
-  status: MessageStatus.Read,
-  updatedAt: new Date().toISOString(),
-  sender: index % 2 ? MessageSender.Admin : MessageSender.Customer,
-}));
 
 const Item: React.FC<Message> = ({ text, sender }) => {
   return (
@@ -36,10 +32,23 @@ const getItem: ItemContent<Message, unknown> = (_, data) => {
 };
 
 export const Chat: React.FC = () => {
+
+  const [messagesList, setMessagesList] = useState<Message[]>([]);
+
+  const [getInstance] = useLazyQuery(GET_MESSAGES);
+
+  useEffect(() => {
+    getInstance()
+      .then(response => {
+        setMessagesList(response.data.messages.edges.map((message:MessageEdge) => message.node));
+      })
+  }, []);
+
+
   return (
     <div className={css.root}>
       <div className={css.container}>
-        <Virtuoso className={css.list} data={temp_data} itemContent={getItem} />
+        <Virtuoso className={css.list} data={messagesList} itemContent={getItem} />
       </div>
       <div className={css.footer}>
         <input
