@@ -37,18 +37,22 @@ export const Chat: React.FC = () => {
 
   const [messagesList, setMessagesList] = useState<Message[]>([]);
   const [textInputValue, setTextInputValue] = useState<string>('');
-  const [pageInfo, setPageInfo] = useState<MessagePageInfo>({});
+  const [pageInfo, setPageInfo] = useState<MessagePageInfo>();
 
   const [getMessages, {loading}] = useLazyQuery(GET_MESSAGES);
-  const [sendMessage] = useMutation(SEND_MESSAGE);
+  const [sendMessage, {loading: sendMessageLoading}] = useMutation(SEND_MESSAGE);
 
-  const handleSend = async () => {
-
+  const handleSend = async (message: string) => {
+    const sendMessageResponse = await sendMessage({variables: {text: message}});
+    const sendMessageInfo = sendMessageResponse.data.sendMessage;
+    setMessagesList([...messagesList, sendMessageInfo]);
+    setTextInputValue('');
+    return sendMessageInfo;
+    
   }
 
   const getMessageFunc = async (filter?: {}) => {
     const output = await getMessages({variables: filter});
-    console.log('output', output)
     const messageList = output.data.messages.edges.map((message:MessageEdge) => message.node);
     setMessagesList([...messagesList, ...messageList]);
     setPageInfo(output.data.messages.pageInfo)
@@ -68,7 +72,7 @@ export const Chat: React.FC = () => {
           data={messagesList}
           itemContent={getItem} 
           endReached={() => {
-            if (pageInfo.hasNextPage) {
+            if (pageInfo?.hasNextPage) {
               getMessageFunc({after: `${pageInfo.endCursor}`})
             }
           }}
@@ -79,13 +83,14 @@ export const Chat: React.FC = () => {
         <input
           type="text"
           value={textInputValue}
+          disabled={sendMessageLoading}
           onChange={e => {
             setTextInputValue(e.target.value);
           }}
           className={css.textInput}
           placeholder="Message text"
         />
-        <button>Send</button>
+        <button onClick={() => handleSend(textInputValue)}>Send</button>
       </div>
     </div>
   );
