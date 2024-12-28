@@ -39,7 +39,7 @@ export const Chat: React.FC = () => {
   const [textInputValue, setTextInputValue] = useState<string>('');
   const [pageInfo, setPageInfo] = useState<MessagePageInfo>({});
 
-  const [getMessages] = useLazyQuery(GET_MESSAGES);
+  const [getMessages, {loading}] = useLazyQuery(GET_MESSAGES);
   const [sendMessage] = useMutation(SEND_MESSAGE);
 
   const handleSend = async () => {
@@ -74,6 +74,7 @@ export const Chat: React.FC = () => {
           }}
         />
       </div>
+      {loading && (<span>Загрузка...</span>)}
       <div className={css.footer}>
         <input
           type="text"
