@@ -35,6 +35,7 @@ export const Chat: React.FC = () => {
 
   const [messagesList, setMessagesList] = useState<Message[]>([]);
   const [textInputValue, setTextInputValue] = useState<string>('');
+  const [startPage, setStartPage] = useState<number>(0);
 
   const [getMessages] = useLazyQuery(GET_MESSAGES);
   const [sendMessage] = useMutation(SEND_MESSAGE);
@@ -43,15 +44,15 @@ export const Chat: React.FC = () => {
 
   }
 
+  const getMessageFunc = async (filter?: {}) => {
+    const output = await getMessages({variables: filter});
+    const messageList = output.data.messages.edges.map((message:MessageEdge) => message.node);
+    setMessagesList(messageList);
+    
+    return messageList;
+  } 
 
   useEffect(() => {
-    const getMessageFunc = async () => {
-      const output = await getMessages();
-      const messageList = output.data.messages.edges.map((message:MessageEdge) => message.node);
-      setMessagesList(messageList);
-      
-      return messageList;
-    } 
 
     getMessageFunc();
   }, []);
