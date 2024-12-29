@@ -5,13 +5,11 @@ import {
   MessageEdge,
   MessagePageInfo,
   MessageSender,
-  MessageStatus,
   type Message,
 } from "../__generated__/resolvers-types";
 import css from "./chat.module.css";
 import { useLazyQuery, useMutation, useSubscription } from "@apollo/client";
 import { GET_MESSAGES, MESSAGE_ADDED, MESSAGE_UPDATED, SEND_MESSAGE } from "./graphql/messages";
-import { after } from "node:test";
 
 
 const Item: React.FC<Message> = ({ text, sender }) => {
@@ -67,7 +65,7 @@ export const Chat: React.FC = () => {
   useEffect(() => {
     if (messageAddedSubscribe) {
       const messageAdded = messageAddedSubscribe.messageAdded;
-      
+
       setMessagesList([...messagesList, messageAdded]);
     }
   }, [messageAddedSubscribe])
