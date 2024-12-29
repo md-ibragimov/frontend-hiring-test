@@ -36,3 +36,27 @@ export const SEND_MESSAGE = gql(`
     }
   }
 `)
+
+export const MESSAGE_ADDED = gql(`
+  subscription MessageAdded {
+    messageAdded {
+      id
+      sender
+      status
+      text
+      updatedAt
+    }
+  }
+`)
+
+export const MESSAGE_UPDATED = gql(`
+  subscription MessageUpdated {
+    messageUpdated {
+      id
+      sender
+      status
+      text
+      updatedAt
+    }
+  }
+`)
